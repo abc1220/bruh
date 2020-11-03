@@ -1,0 +1,59 @@
+
+<html>
+    <head>
+        <title>HotZone</title>
+
+    </head>
+    <body>
+        <h1>Welcome to HotZone Location Search!</h1>
+        <p>Enter keywords to search for a location:</p>
+        <input id='user-string' placeholder='e.g.: HKU'></input>
+        <button onclick='enter()'>Enter</button><br>
+            <div id='current'></div>
+    <script>
+        const enter = () => {
+        document.getElementById("current").innerHTML = "";
+        const user_string = document.getElementById('user-string').value
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET','https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q='+user_string);
+
+        xhr.onload = () => {
+            const data = JSON.parse(xhr.response)
+            const name = data[0].nameEN
+            const address = data[0].addressEN
+            const x_coor = data[0].x
+            const y_coor = data[0].y
+            console.log(name)
+            console.log(address)
+            console.log(x_coor)
+            console.log(y_coor)
+            const newDiv1 = document.createElement("div"); 
+            newDiv1.appendChild(document.createTextNode('Location name: '+name));
+            const newDiv2 = document.createElement("div"); 
+            newDiv2.appendChild(document.createTextNode('Location address: '+address));
+            const newDiv3 = document.createElement("div"); 
+            newDiv3.appendChild(document.createTextNode('X-coordinate of location: '+x_coor));
+            const newDiv4 = document.createElement("div"); 
+            newDiv4.appendChild(document.createTextNode('Y-coordinate of location: '+y_coor));
+            const currentDiv = document.getElementById("current"); 
+            document.getElementById("current").appendChild(newDiv1);
+            document.getElementById("current").appendChild(newDiv2);
+            document.getElementById("current").appendChild(newDiv3);
+            document.getElementById("current").appendChild(newDiv4);
+
+            const newDiv5 = document.createElement("button"); 
+            newDiv5.appendChild(document.createTextNode('Add to database'));
+            document.getElementById("current").appendChild(newDiv5);
+            newDiv5.onclick = () => {
+                const xhr2 = new XMLHttpRequest()
+                const locationStr = JSON.stringify(data[0])
+                xhr2.open("POST", "http://127.0.0.1:8000/admin/location/location/add/",true)
+                xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+                xhr2.send(locationStr)
+            }
+        };
+
+        xhr.send();
+        }
+    </script>
+</html>

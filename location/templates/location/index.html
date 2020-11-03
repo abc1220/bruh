@@ -1,0 +1,11 @@
+{% if all_locations %}
+    <ul>
+        {% for location in all_locations %}
+        <li>
+            <a href="/location/{{location.id}}/">{{location.location_name}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <h2>No locations recorded.</h2>
+{% endif %}
